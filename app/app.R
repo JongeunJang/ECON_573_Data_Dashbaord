@@ -3,9 +3,10 @@ library(leaflet)
 library(dplyr)
 library(lubridate)
 library(plotly)
+library(sf)
 
 # Load pre-processed data
-preprocessed_data <- readRDS("./data/preprocessed_data.rds")
+preprocessed_data <- readRDS("preprocessed_data.rds")
 data <- preprocessed_data$data
 us_counties <- preprocessed_data$us_counties
 

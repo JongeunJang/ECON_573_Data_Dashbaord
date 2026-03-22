@@ -82,6 +82,8 @@ continental_state_fips <- c(
 
 us_counties_simplified <- us_counties_shapefile %>%
   filter(substr(GEOID, 1, 2) %in% continental_state_fips) %>%
+  select(GEOID) %>%
+  st_zm(drop = TRUE, what = "ZM") %>%
   ms_simplify(keep = 0.05, keep_shapes = TRUE)
 
 
