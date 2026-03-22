@@ -1,10 +1,7 @@
 library(shiny)
 library(leaflet)
 library(dplyr)
-library(ggplot2)
-library(sf)
 library(lubridate)
-library(ggrepel)
 library(plotly)
 
 # Load pre-processed data
