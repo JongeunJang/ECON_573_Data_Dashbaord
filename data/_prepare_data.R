@@ -14,9 +14,9 @@ library(tigris)
 library(rmapshaper)
 
 # Load raw data
-fema_raw <- read_csv("./data/DisasterDeclarationsSummaries_raw.csv")
-zillow_raw <- read_csv("./data/County_zhvi_uc_sfrcondo_tier_0.33_0.67_sm_sa_month_raw.csv")
-us_counties_shapefile <- readRDS("./data/us_counties_2020.rds")
+fema_raw <- read_csv("DisasterDeclarationsSummaries_raw.csv")
+zillow_raw <- read_csv("County_zhvi_uc_sfrcondo_tier_0.33_0.67_sm_sa_month_raw.csv")
+us_counties_shapefile <- readRDS("us_counties_2020.rds")
 
 # Process FEMA data
 fema_clean <- fema_raw %>%
@@ -27,14 +27,13 @@ fema_clean <- fema_raw %>%
     fips = paste0(fipsStateCode, fipsCountyCode),
     incident_date = as.Date(incidentBeginDate)
   ) %>%
-  select(fips, femaDeclarationString, incident_date, hurricane_name = declarationTitle)
+  select(fips, incident_date, hurricane_name = declarationTitle)
 
 fema_monthly <- fema_clean %>%
   mutate(incident_month = floor_date(incident_date, "month")) %>%
   group_by(fips, incident_month) %>%
   summarize(
     hurricane_names = str_c(unique(hurricane_name), collapse = "; "),
-    femaDeclarationStrings = str_c(unique(femaDeclarationString), collapse = "; "),
     n_hurricanes = n(),
     .groups = "drop"
   )
@@ -62,7 +61,7 @@ data_hurricane_housing <- zillow_clean %>%
   mutate(
     hurricane_flag = if_else(!is.na(hurricane_names), TRUE, FALSE)
   ) %>%
-  select(fips, date, RegionName, StateName, zhvi_value, hurricane_flag, n_hurricanes, hurricane_names, femaDeclarationStrings)
+  select(fips, date, RegionName, StateName, zhvi_value, hurricane_flag, n_hurricanes, hurricane_names)
 
 
 # Prepare data for map: counties with hurricanes
@@ -84,7 +83,7 @@ us_counties_simplified <- us_counties_shapefile %>%
   filter(substr(GEOID, 1, 2) %in% continental_state_fips) %>%
   select(GEOID) %>%
   st_zm(drop = TRUE, what = "ZM") %>%
-  ms_simplify(keep = 0.05, keep_shapes = TRUE)
+  ms_simplify(keep = 0.001, keep_shapes = TRUE)
 
 
 # Merge with hurricane data
@@ -98,7 +97,8 @@ saveRDS(
     data = data_hurricane_housing,
     us_counties = us_counties_processed
   ),
-  file = "./data/preprocessed_data.rds"
+  file = "preprocessed_data.rds",
+  compress = "gzip"
 )
 
-print("Data preprocessing complete. 'preprocessed_data.rds' saved to data directory.")
+print("Data preprocessing complete.")

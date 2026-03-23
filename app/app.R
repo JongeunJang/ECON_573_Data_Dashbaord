@@ -4,6 +4,8 @@ library(dplyr)
 library(lubridate)
 library(plotly)
 library(sf)
+library(munsell)
+library(scales)
 
 # Load pre-processed data
 preprocessed_data <- readRDS("preprocessed_data.rds")
