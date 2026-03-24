@@ -1,0 +1,12 @@
+name: hurricane-homevalue
+title: hurricane-homevalue
+username: jongeunjang
+account: jongeunjang
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 16967557
+bundleId: 11751813
+url: https://jongeunjang.shinyapps.io/hurricane-homevalue/
+version: 1
+asMultiple: FALSE
+asStatic: FALSE

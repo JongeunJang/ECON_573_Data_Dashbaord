@@ -8,7 +8,7 @@ library(munsell)
 library(scales)
 
 # Load pre-processed data
-preprocessed_data <- readRDS("preprocessed_data.rds")
+preprocessed_data <- readRDS("preprocessed_data_backup.rds")
 data <- preprocessed_data$data
 us_counties <- preprocessed_data$us_counties
 
@@ -169,4 +169,4 @@ server <- function(input, output, session) {
 }
 
 # Run the app
-shinyApp(ui = ui, server = server)
+print(shinyApp(ui = ui, server = server))

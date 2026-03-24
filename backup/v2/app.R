@@ -9,8 +9,17 @@ library(scales)
 
 # Load pre-processed data
 preprocessed_data <- readRDS("preprocessed_data.rds")
-data <- preprocessed_data$data
+data_without_names <- preprocessed_data$data
 us_counties <- preprocessed_data$us_counties
+
+# Create a lookup table for county names from the spatial data
+county_name_lookup <- us_counties %>%
+  st_drop_geometry() %>%
+  select(fips, RegionName, StateName) %>%
+  distinct(fips, .keep_all = TRUE)
+
+# Join names to the main data so it's available for plots and dropdowns
+data <- left_join(data_without_names, county_name_lookup, by = "fips")
 
 # UI
 ui <- fluidPage(
@@ -25,8 +34,7 @@ ui <- fluidPage(
       h5("Data Sources:"),
       tags$ul(
         tags$li(tags$a(href = "https://www.fema.gov/openfema-data-page/disaster-declarations-summaries-v2", "FEMA Disaster Declarations Summaries")),
-        tags$li(tags$a(href = "https://www.zillow.com/research/data/", "Zillow Home Value Index (ZHVI)")),
-        tags$li(tags$a(href = "https://www.census.gov/geographies/mapping-files/time-series/geo/tiger-line-file.html", "US Counties Shapefile"))
+        tags$li(tags$a(href = "https://www.zillow.com/research/data/", "Zillow Home Value Index (ZHVI)"))
       )
     ),
     mainPanel(
